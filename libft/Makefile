@@ -6,7 +6,7 @@
 #    By: mneboth <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/10 10:49:26 by mneboth           #+#    #+#              #
-#    Updated: 2016/11/15 23:35:36 by mneboth          ###   ########.fr        #
+#    Updated: 2016/12/14 13:48:37 by mneboth          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,12 +49,15 @@ SRC = 	ft_atoi.c \
 		ft_strcpy.c \
 		ft_strdel.c \
 		ft_strdup.c \
+		ft_strndup.c \
 		ft_strequ.c \
 		ft_striter.c \
 		ft_striteri.c \
 		ft_strjoin.c \
+		ft_strnjoin.c \
 		ft_strlcat.c \
 		ft_strlen.c \
+		ft_strlen_chr.c \
 		ft_strmap.c \
 		ft_strmapi.c \
 		ft_strncat.c \

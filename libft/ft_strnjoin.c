@@ -1,23 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_strnjoin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mneboth <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/12 16:55:43 by mneboth           #+#    #+#             */
-/*   Updated: 2016/12/14 14:08:37 by mneboth          ###   ########.fr       */
+/*   Created: 2016/12/14 13:41:26 by mneboth           #+#    #+#             */
+/*   Updated: 2016/12/14 13:42:44 by mneboth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *b, int c, size_t len)
+char	*ft_strnjoin(char const *s1, char const *s2, size_t n)
 {
-	while (len > 0)
+	char	*str;
+
+	if (!s1 || !s2)
+		return (NULL);
+	if (!(str = (char *)ft_memalloc(ft_strlen(s1) + n + 1)))
+		return (NULL);
+	ft_memcpy(str, s1, n);
+	if (n > ft_strlen(str))
 	{
-		len--;
-		((unsigned char *)b)[len] = (unsigned char)c;
+		n -= ft_strlen(str);
+		ft_strncat(str, s2, n);
 	}
-	return (b);
+	return (str);
 }

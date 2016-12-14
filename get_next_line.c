@@ -5,89 +5,76 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mneboth <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/12/13 15:42:47 by mneboth           #+#    #+#             */
-/*   Updated: 2016/12/13 16:02:47 by mneboth          ###   ########.fr       */
+/*   Created: 2016/12/14 13:38:22 by mneboth           #+#    #+#             */
+/*   Updated: 2016/12/14 15:20:39 by mneboth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int				ft_strrlen(char *str, char c)
+t_line	*init(int fd, t_line *tmp)
 {
-	int	i;
-
-	i = 0;
-	while (str[i] != c && str[i] != '\0')
-		i++;
-	return (i);
+	if (!tmp)
+		return (NULL);
+	while (tmp->next && tmp->fd != fd)
+		tmp = tmp->next;
+	if (tmp->fd == fd)
+		return (tmp);
+	if (!(tmp->next = (t_line *)ft_memalloc(sizeof(t_line))))
+		return (NULL);
+	tmp = tmp->next;
+	if (!(tmp->line = (char *)ft_memalloc(BUFF_SIZE + 1)))
+		return (NULL);
+	tmp->fd = fd;
+	return (tmp);
 }
 
-char			*ft_concatenate(char *s1, char *s2)
+int		read_file(int fd, t_line *tmp, char **line)
 {
-	char		*s3;
-	size_t		size;
+	char	*buff;
+	int		ret;
+	int		endl;
+	char	*temp;
 
-	s3 = NULL;
-	if (s1 && s2)
+	endl = (ft_strchr(tmp->line, BACKN)) ? 1 : 0;
+	buff = (char*)ft_memalloc(BUFF_SIZE + 1);
+	ret = 1;
+	while (!endl && ret > 0)
 	{
-		size = (size_t)ft_strrlen(s2, '\n');
-		s3 = ft_strnew(ft_strlen(s1) + size);
-		if (!s3)
-			return (NULL);
-		s3 = ft_strcpy(s3, s1);
-		s3 = ft_strncat(s3, s2, size);
+		if ((ret = read(fd, buff, BUFF_SIZE)) < 0)
+			return (-1);
+		if (!(temp = ft_strnjoin(tmp->line, buff, ft_strlen(tmp->line) + ret)))
+			return (-1);
+		free(tmp->line);
+		tmp->line = temp;
+		endl = (ft_strchr(tmp->line, BACKN)) ? 1 : 0;
 	}
-	return (s3);
+	free(buff);
+	if (!(ret = (int)ft_strlen(tmp->line)))
+		return (0);
+	endl = ft_strlen_chr(tmp->line, BACKN);
+	*line = ft_strndup(tmp->line, endl);
+	tmp->line = ft_strsub(tmp->line, endl + 1, ft_strlen(tmp->line) - endl);
+	return ((ret > 0));
 }
 
-static t_gnl	*find_fd(t_gnl **begin_list, int fd)
+int		get_next_line(const int fd, char **line)
 {
-	if (*begin_list == NULL)
-	{
-		*begin_list = (t_gnl*)ft_memalloc(sizeof(t_gnl));
-		(*begin_list)->fd = fd;
-		return (*begin_list);
-	}
-	else if ((*begin_list)->next == NULL)
-	{
-		if ((*begin_list)->fd == fd)
-			return (*begin_list);
-		(*begin_list)->next = (t_gnl*)ft_memalloc(sizeof(t_gnl));
-		(*begin_list)->next->fd = fd;
-		return ((*begin_list)->next);
-	}
-	else
-	{
-		if ((*begin_list)->fd == fd)
-			return (*begin_list);
-		return (find_fd(&(*begin_list)->next, fd));
-	}
-	return (*begin_list);
-}
+	static t_line	*lect = NULL;
+	t_line			*tmp;
 
-int				get_next_line(int fd, char **line)
-{
-	static t_gnl	*begin = NULL;
-	t_gnl			*gnl;
-	int				size;
-
-	gnl = find_fd(&begin, fd);
-	*line = ft_strnew(0);
-	if (!POS || (POS == RET))
+	if ((read(fd, 0, 0)) < 0)
+		return (-1);
+	if (!lect)
 	{
-		POS = 0;
-		if ((RET = read(fd, BUFF, BUFF_SIZE)) <= 0)
-			return (RET);
-		BUFF[RET] = '\0';
+		if (!(lect = (t_line *)ft_memalloc(sizeof(t_line))))
+			return (-1);
+		if (!(lect->line = (char *)ft_memalloc(BUFF_SIZE + 1)))
+			return (-1);
+		lect->fd = fd;
+		lect->next = NULL;
 	}
-	while ((size = ft_strrlen(&BUFF[POS], '\n')) == RET - POS && RET)
-	{
-		*line = ft_strjoin(*line, &BUFF[POS]);
-		POS = 0;
-		RET = read(fd, BUFF, BUFF_SIZE);
-		BUFF[RET] = '\0';
-	}
-	*line = ft_concatenate(*line, &BUFF[POS]);
-	POS = (RET == BUFF_SIZE || size < RET) ? POS + size + 1 : 0;
-	return (1);
+	tmp = lect;
+	tmp = init(fd, tmp);
+	return (read_file(fd, tmp, line));
 }

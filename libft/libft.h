@@ -6,7 +6,7 @@
 /*   By: mneboth <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/11 00:06:52 by mneboth           #+#    #+#             */
-/*   Updated: 2016/12/05 23:43:30 by mneboth          ###   ########.fr       */
+/*   Updated: 2016/12/14 13:50:48 by mneboth          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,10 @@ char			*ft_strstr(const char *big, const char *little);
 char			*ft_strcat(char *s1, const char *s2);
 char			*ft_strncat(char *s1, const char *s2, size_t n);
 size_t			ft_strlen(const char *s);
+int				ft_strlen_chr(char *s, char c);
 char			*ft_strchr(const char *s, int c);
 char			*ft_strdup(const char *s1);
+char			*ft_strndup(const char *s1, size_t n);
 size_t			ft_strlcat(char *dst, const char *src, size_t size);
 char			*ft_strncpy(char *dst, const char *src, size_t n);
 char			*ft_strnstr(const char *s1, const char *s2, size_t n);
@@ -66,6 +68,7 @@ int				ft_strequ(const char *s1, const char *s2);
 int				ft_strnequ(char const *s1, char const *s2, size_t n);
 char			*ft_strsub(char const *s, unsigned int start, size_t len);
 char			*ft_strjoin(char const *s1, char const *s2);
+char			*ft_strnjoin(char const *s1, char const *s2, size_t n);
 char			*ft_strtrim(char const *s);
 char			**ft_strsplit(char const *s, char c);
 char			*ft_itoa(int n);
